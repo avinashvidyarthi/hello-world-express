@@ -7,9 +7,6 @@ on:
       - main
     types:
       - closed
-  push:
-    branches:
-      - dev
 
 env:
   PROJECT_ID: avinashvidyarthi
