@@ -8,16 +8,18 @@ on:
     types:
       - closed
 
+env:
+  PROJECT_ID: portfolio
+  REGION: us-central1
+  REPO_NAME: hello-world-cicd-demo
+  DEV_SERVICE: dev-service
+  PROD_SERVICE: dev-service
+
 jobs:
   deploy:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    env:
-      PROJECT_ID: portfolio
-      REGION: us-central1
-      REPO_NAME: hello-world-cicd-demo
-      DEV_SERVICE: dev-service
-      PROD_SERVICE: dev-service
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,7 +27,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ env.PROJECT_ID }}
+          project_id: ${PROJECT_ID}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
@@ -36,23 +38,23 @@ jobs:
         id: deploy_vars
         run: |
           if [[ "${{ github.base_ref }}" == "dev" ]]; then
-            echo "SERVICE=$DEV_SERVICE" >> $GITHUB_ENV
-            echo "DEV_IMAGE_NAME=gcr.io/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/hello-world-dev" >> $GITHUB_ENV
-            echo "IMAGE_NAME=$DEV_IMAGE_NAME" >> $GITHUB_ENV
+            echo "SERVICE=${DEV_SERVICE}" >> $GITHUB_ENV
+            echo "DEV_IMAGE_NAME=gcr.io/${PROJECT_ID}/${REPO_NAME}/hello-world-dev" >> $GITHUB_ENV
+            echo "IMAGE_NAME=${DEV_IMAGE_NAME}" >> $GITHUB_ENV
           elif [[ "${{ github.base_ref }}" == "prod" ]]; then
-            echo "SERVICE=$PROD_SERVICE" >> $GITHUB_ENV
-            echo "PROD_IMAGE_NAME=gcr.io/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/hello-world-prod" >> $GITHUB_ENV
-            echo "IMAGE_NAME=$PROD_IMAGE_NAME" >> $GITHUB_ENV
+            echo "SERVICE=${PROD_SERVICE}" >> $GITHUB_ENV
+            echo "PROD_IMAGE_NAME=gcr.io/${PROJECT_ID}/${REPO_NAME}/hello-world-prod" >> $GITHUB_ENV
+            echo "IMAGE_NAME=${PROD_IMAGE_NAME}" >> $GITHUB_ENV
           fi
 
       - name: Build Docker image
         run: |
           docker build . \
-            --tag ${{ env.IMAGE_NAME }}:latest \
-            --tag ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            --tag ${IMAGE_NAME}:latest \
+            --tag ${IMAGE_NAME}:${{ github.sha }}
 
       - name: Push Docker image to Artifact Registry
-        run: docker push ${{ env.IMAGE_NAME }} --all-tags
+        run: docker push ${IMAGE_NAME} --all-tags
 
       # - name: Deploy to Cloud Run
       #   run: |
