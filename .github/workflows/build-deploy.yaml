@@ -12,7 +12,7 @@ on:
       - dev
 
 env:
-  PROJECT_ID: portfolio
+  PROJECT_ID: avinashvidyarthi
   REGION: us-central1
   REPO_NAME: hello-world-cicd-demo
   DEV_SERVICE: dev-service
