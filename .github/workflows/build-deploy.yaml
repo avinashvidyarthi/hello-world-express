@@ -38,7 +38,7 @@ jobs:
           if [[ "${{ github.base_ref }}" == "dev" ]]; then
             echo "SERVICE=$DEV_SERVICE" >> $GITHUB_ENV
             echo "IMAGE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME/hello-world-dev" >> $GITHUB_ENV
-          elif [[ "${{ github.base_ref }}" == "prod" ]]; then
+          elif [[ "${{ github.base_ref }}" == "main" ]]; then
             echo "SERVICE=$PROD_SERVICE" >> $GITHUB_ENV
             echo "IMAGE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME/hello-world-prod" >> $GITHUB_ENV
           elif [[ "${{ github.ref_name }}" == "dev" ]]; then
